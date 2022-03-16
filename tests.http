@@ -1,0 +1,74 @@
+@hostname = localhost
+@port = 5001
+@host = {{hostname}}:{{port}}/api
+@contentType = application/json
+@newGuid={{$guid}}
+
+# @name requestNewPackingList
+POST https://{{host}}/PackingLists
+Content-Type:{{contentType}}
+
+{
+  "id": "{{newGuid}}",
+  "name": "myPackingList-{{newGuid}}",
+  "days": 8,
+  "gender": 0,
+  "localization": {
+    "city": "leuven",
+    "country": "Belgium"
+  }
+}
+
+### 
+@latestGuid = {{requestNewPackingList.request.body.$.id}}
+
+### get latest created packing list
+GET https://{{host}}/PackingLists/{{latestGuid}}
+
+
+
+### add packing list item
+@newItemGuid={{$guid}}
+
+PUT https://{{host}}/PackingLists/{{latestGuid}}/items
+Content-Type:{{contentType}}
+
+{
+  "packingListId": "{{latestGuid}}",
+  "name": "newItem-{{newItemGuid}}",
+  "quantity": 8
+}
+
+###
+
+### pack specific packing list item
+PUT https://{{host}}/PackingLists/{{latestGuid}}/items
+Content-Type:{{contentType}}
+
+{
+  "packingListId": "{{latestGuid}}",
+  "name": "joske2",
+  "quantity": 8
+}
+
+### 
+PUT https://{{host}}/PackingLists/{{latestGuid}}/items/{{itemName}}/pack
+Content-Type:{{contentType}}
+
+{
+  "packingListId": "{{latestGuid}}",
+  "name": "joske2"
+}
+
+
+### Get all packing lists
+GET https://{{host}}/PackingLists
+
+
+### Delete all packing lists
+
+DELETE https://{{host}}/PackingLists
+Content-Type:{{contentType}}
+
+{}
+###
